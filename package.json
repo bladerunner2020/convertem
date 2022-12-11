@@ -1,6 +1,6 @@
 {
   "name": "convertem",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "files": [
@@ -10,7 +10,7 @@
     "start": "node dist/samples/app.js",
     "prestart": "npm run build",
     "build": "tsc",
-    "prebuild-prod": "node scripts/clean.js",
+    "prebuild-prod": "rm -rf ./dist/",
     "build-prod": "tsc --project tsconfig-prod.json",
     "test": "jest"
   },
