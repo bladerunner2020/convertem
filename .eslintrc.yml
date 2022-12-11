@@ -1,0 +1,78 @@
+env:
+  commonjs: true
+  es6: true
+  node: true
+  jest: true
+extends:
+  - airbnb-base
+globals:
+  Atomics: readonly
+  SharedArrayBuffer: readonly
+plugins:
+  - import
+parserOptions:
+  ecmaVersion: 2018
+rules:
+  func-names: ["error", "as-needed"]
+  space-before-function-paren: ["error", "never"]
+  max-len: ["error", 120]
+  no-underscore-dangle: ["error", { "allow": ["_id", "_str"]}]
+  no-plusplus: ["error", {"allowForLoopAfterthoughts": true}]
+  comma-dangle: ["error", "only-multiline"]
+
+overrides:
+  - files: ["**/*.ts"]
+    env:
+      browser: true
+      es6: true
+      node: true
+    extends:
+      - airbnb-base
+      - airbnb-typescript/base
+    globals:
+      Atomics": "readonly"
+      SharedArrayBuffer: "readonly"
+    parser: "@typescript-eslint/parser"
+    parserOptions:
+      project: './tsconfig.json'
+      ecmaVersion: 2018
+      sourceType: module
+      plugins:
+        - "@typescript-eslint"
+    rules:
+      max-len: ["error", 120]
+      guard-for-in: 0
+      no-restricted-syntax: 0
+      "@typescript-eslint/lines-between-class-members": ['error', 'always', { 'exceptAfterSingleLine': true }]
+      "@typescript-eslint/comma-dangle": ["error", "only-multiline"]
+      "@typescript-eslint/space-before-function-paren": ["error", {
+          "anonymous": "never",
+          "named": "never",
+          "asyncArrow": "always"
+        }]
+      "@typescript-eslint/naming-convention": [
+          "error",
+          { 
+            selector: "variableLike",
+            format: ["camelCase", "PascalCase"],
+            filter: {
+              regex: '(_id|_str)',
+              match: false,
+            }
+          },
+          {
+            selector: "variable",
+            format: ["camelCase", "PascalCase",  "UPPER_CASE"],
+            modifiers: ["const"],
+            filter: {
+              regex: '(_id|_str)',
+              match: false,
+            }
+          },
+          { 
+            selector: "parameter",
+            format: ["camelCase", "PascalCase"],
+            modifiers: ["unused"],
+            leadingUnderscore: "require"
+          },
+        ]
