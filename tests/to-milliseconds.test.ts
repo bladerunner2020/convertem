@@ -35,12 +35,14 @@ describe('toMilliseconds', () => {
     expect(toMilliseconds('10  sec ')).toBe(10000);
     expect(toMilliseconds('10 s')).toBe(10000);
     expect(toMilliseconds('0.5 sec')).toBe(500);
+    expect(toMilliseconds('1.5 sec')).toBe(1500);
 
     expect(toMilliseconds('1 minute')).toBe(60000);
     expect(toMilliseconds('10 m')).toBe(600000);
     expect(toMilliseconds('10 min')).toBe(600000);
     expect(toMilliseconds('10 minutes')).toBe(600000);
     expect(toMilliseconds('0.5 min')).toBe(30000);
+    expect(toMilliseconds('1.5 min')).toBe(90000);
 
     expect(toMilliseconds('1 hour')).toBe(3600000);
     expect(toMilliseconds('10 h')).toBe(36000000);
