@@ -31,11 +31,11 @@ let timeParsers: TimeParser[] = [
   // "X ms" or "X millisecond(s)"
   { re: /^(\d+) *(:?ms|milliseconds?)$/, f: (res) => +res[1] },
   // "X s" or "X sec" or "X second(s)"
-  { re: /^(\d+) *(:?s|sec|seconds?)$/, f: (res) => +res[1] * 1000 }, // seconds
+  { re: /^(\d+(\.\d+)?) *(:?s|sec|seconds?)$/, f: (res) => +res[1] * 1000 }, // seconds
   // "X m" or "X min" or "X minute(s)"
-  { re: /^(\d+) *(:?m|min|minutes?)$/, f: (res) => +res[1] * 60 * 1000 },
+  { re: /^(\d+(\.\d+)?) *(:?m|min|minutes?)$/, f: (res) => +res[1] * 60 * 1000 },
   // X hours
-  { re: /^(\d+) *(:?h|hours?)$/, f: (res) => +res[1] * 3600 * 1000 },
+  { re: /^(\d+(\.\d+)?) *(:?h|hours?)$/, f: (res) => +res[1] * 3600 * 1000 },
   // time in format mm:ss
   { re: /^(\d{1,2}):(\d{2})$/, f: (res) => +res[1] * 60 * 1000 + +res[2] * 1000 },
   // time in format hh:mm:ss

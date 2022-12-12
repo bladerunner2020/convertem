@@ -4,13 +4,13 @@ const RU_TIME_PARSERS: TimeParser[] = [
   // "X"
   { re: /^(\d+)$/, f: (res) => +res[1] },
   // "X ms" or "X millisecond(s)"
-  { re: /^(\d+) *мс$/, f: (res) => +res[1] },
+  { re: /^(\d+(\.\d+)?) *мс$/, f: (res) => +res[1] },
   // "X s" or "X sec" or "X second(s)"
-  { re: /^(\d+) *(:?с|сек|секунд.?)$/, f: (res) => +res[1] * 1000 }, // seconds
+  { re: /^(\d+(\.\d+)?) *(:?с|сек|секунд.?)$/, f: (res) => +res[1] * 1000 }, // seconds
   // "X m" or "X min" or "X minute(s)"
-  { re: /^(\d+) *(:?м|мин|минут.?)$/, f: (res) => +res[1] * 60 * 1000 },
+  { re: /^(\d+(\.\d+)?) *(:?м|мин|минут.?)$/, f: (res) => +res[1] * 60 * 1000 },
   // X hours
-  { re: /^(\d+) *(:?ч|час|часа|часов)$/, f: (res) => +res[1] * 3600 * 1000 },
+  { re: /^(\d+(\.\d+)?) *(:?ч|час|часа|часов)$/, f: (res) => +res[1] * 3600 * 1000 },
   // time in format mm:ss
   { re: /^(\d{1,2}):(\d{2})$/, f: (res) => +res[1] * 60 * 1000 + +res[2] * 1000 },
   // time in format hh:mm:ss
@@ -34,15 +34,18 @@ describe('toMilliseconds', () => {
     expect(toMilliseconds('10 seconds')).toBe(10000);
     expect(toMilliseconds('10  sec ')).toBe(10000);
     expect(toMilliseconds('10 s')).toBe(10000);
+    expect(toMilliseconds('0.5 sec')).toBe(500);
 
     expect(toMilliseconds('1 minute')).toBe(60000);
     expect(toMilliseconds('10 m')).toBe(600000);
     expect(toMilliseconds('10 min')).toBe(600000);
     expect(toMilliseconds('10 minutes')).toBe(600000);
+    expect(toMilliseconds('0.5 min')).toBe(30000);
 
     expect(toMilliseconds('1 hour')).toBe(3600000);
     expect(toMilliseconds('10 h')).toBe(36000000);
     expect(toMilliseconds('10 hours')).toBe(36000000);
+    expect(toMilliseconds('0.2 h')).toBe(3600000 * 0.2);
   });
 
   it('time format mm:ss', () => {
