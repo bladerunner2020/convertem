@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.toNumber = exports.setTimeParsers = exports.toMilliseconds = exports.toBoolean = void 0;
+exports.fromMsToString = exports.toNumber = exports.setTimeParsers = exports.toMilliseconds = exports.toBoolean = void 0;
 // Convert input argument s to boolean
 // if s is a string
 //     yes, true, on (case insensitive) => true
@@ -36,11 +36,11 @@ let timeParsers = [
     // "X ms" or "X millisecond(s)"
     { re: /^(\d+) *(:?ms|milliseconds?)$/, f: (res) => +res[1] },
     // "X s" or "X sec" or "X second(s)"
-    { re: /^(\d+) *(:?s|sec|seconds?)$/, f: (res) => +res[1] * 1000 },
+    { re: /^(\d+(\.\d+)?) *(:?s|sec|seconds?)$/, f: (res) => +res[1] * 1000 },
     // "X m" or "X min" or "X minute(s)"
-    { re: /^(\d+) *(:?m|min|minutes?)$/, f: (res) => +res[1] * 60 * 1000 },
+    { re: /^(\d+(\.\d+)?) *(:?m|min|minutes?)$/, f: (res) => +res[1] * 60 * 1000 },
     // X hours
-    { re: /^(\d+) *(:?h|hours?)$/, f: (res) => +res[1] * 3600 * 1000 },
+    { re: /^(\d+(\.\d+)?) *(:?h|hours?)$/, f: (res) => +res[1] * 3600 * 1000 },
     // time in format mm:ss
     { re: /^(\d{1,2}):(\d{2})$/, f: (res) => +res[1] * 60 * 1000 + +res[2] * 1000 },
     // time in format hh:mm:ss
@@ -102,4 +102,27 @@ const toNumber = (s) => {
     return null;
 };
 exports.toNumber = toNumber;
+const formatClockValue = (value) => (+value < 10
+    ? `0${value.toString().split('.')[0]}`
+    : `${value.toString().split('.')[0]}`);
+const setPrecision = (value, p) => (p ? value.toFixed(p) : value.toString().split('.')[0]);
+const reverseTimeParsers = new Map([
+    ['ms', (ms) => `${ms} ms`],
+    ['ss', (ms, p, c) => `${setPrecision((c ? ms % 60000 : ms) / 1000, p)} sec`],
+    ['mm', (ms, p, c) => `${setPrecision((c ? ms % 3600000 : ms) / 1000 / 60, p)} min`],
+    ['hh', (ms, p) => `${setPrecision(ms / 1000 / 60 / 60, p)} h`],
+    ['hh:mm', (ms) => `${formatClockValue(ms / 1000 / 60 / 60)}:${formatClockValue((ms % (1000 * 60 * 60)) / 1000 / 60)}`],
+    ['hh:mm:ss', (ms) => `${formatClockValue(ms / 1000 / 60 / 60)}:${formatClockValue((ms % (1000 * 60 * 60)) / 1000 / 60)}:${formatClockValue((ms % (1000 * 60)) / 1000)}`],
+]);
+const fromMsToString = (ms, format, precision) => {
+    if (!ms)
+        return null;
+    return format.split(' ').reduce((acc, f, i) => {
+        const parser = reverseTimeParsers.get(f);
+        if (!parser)
+            throw new Error(`Unsupported format: ${f}`);
+        return [...acc, parser(ms, precision, i > 0)];
+    }, []).join(' ');
+};
+exports.fromMsToString = fromMsToString;
 //# sourceMappingURL=index.js.map

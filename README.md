@@ -2,8 +2,19 @@
 
 Small library that helps with convertion. Could be very helpful when getting values from configuration files (like yaml, etc).
 
+## Installation
+
+```bash
+npm install convertem
+```
+
+## Usage
+
 - **toNumber** - convert argument to a number or return null if conversion failed
-  ```js
+
+  ```ts
+  import { toNumber } from 'convertem';
+
   toNumber('42'); // 42
   toNumber('0x42'); // 0x42
   toNumber(42); // 42
@@ -11,7 +22,10 @@ Small library that helps with convertion. Could be very helpful when getting val
   ```
 
 - **toBoolean** - convert argument to a boolean
+
   ```js
+  import { toBoolean } from 'convertem';
+
   toBoolean('1'); // true
   toBoolean(42); // true
   toBoolean('True'); // true
@@ -29,7 +43,10 @@ Small library that helps with convertion. Could be very helpful when getting val
   ```
 
 - **toMilliseconds** - convert argument to a milliseconds
+
   ```js
+  import { toMilliseconds } from 'convertem';
+
   toMilliseconds(42); // 42
   toMilliseconds('42'); // 42
   toMilliseconds('42 ms'); // 42
@@ -49,7 +66,10 @@ Small library that helps with convertion. Could be very helpful when getting val
   ```
 
 - **fromMsToString** - convert argument from milliseconds to backward-compatible string
+
   ```js
+   import { fromMsToString } from 'convertem';
+
   fromMsToString(1000, 'ms'); // 1000 ms
   fromMsToString(1000, 'ss'); // 1 sec
   fromMsToString(1541, 'ss'); // 1 sec
