@@ -47,3 +47,19 @@ Small library that helps with convertion. Could be very helpful when getting val
   toMilliseconds(''); // 0
   toMilliseconds(null); // 0
   ```
+
+- **fromMsToString** - convert argument from milliseconds to backward-compatible string
+  ```js
+  fromMsToString(1000, 'ms'); // 1000 ms
+  fromMsToString(1000, 'ss'); // 1 sec
+  fromMsToString(1541, 'ss'); // 1 sec
+  fromMsToString(1541, 'ss', 2); // 1.54 sec
+  fromMsToString(90000, 'mm'); // 1 min
+  fromMsToString(90000, 'mm', 1); // 1.5 min
+  fromMsToString(5400000, 'hh'); // 1 h
+  fromMsToString(5400000, 'hh', 1) // 1.5 h
+  fromMsToString(5400000, 'hh:mm'); // 01:30
+  fromMsToString(5400000, 'hh:mm:ss'); // 01:30:00
+  fromMsToString(1802000, 'mm ss'); // 30 min 2 sec
+  fromMsToString(5402000, 'hh mm ss'); // 1 h 30 min 2 sec
+  ```
