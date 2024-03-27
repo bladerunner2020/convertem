@@ -92,3 +92,43 @@ export const toNumber = (s?: string | boolean | number): number | null => {
   }
   return null;
 };
+
+const formatClockValue = (value: number): string => (
+  +value < 10
+    ? `0${value.toString().split('.')[0]}`
+    : `${value.toString().split('.')[0]}`
+);
+const setPrecision = (value: number, p?: number) => (p ? value.toFixed(p) : value.toString().split('.')[0]);
+const reverseTimeParsers: Map<string, (
+  ms: number,
+  precision?: number,
+  crop?: boolean
+) => string> = new Map([
+  ['ms', (ms) => `${ms} ms`],
+  ['ss', (ms, p, c) => `${setPrecision((c ? ms % 60000 : ms) / 1000, p)} sec`],
+  ['mm', (ms, p, c) => `${setPrecision((c ? ms % 3600000 : ms) / 1000 / 60, p)} min`],
+  ['hh', (ms, p) => `${setPrecision(ms / 1000 / 60 / 60, p)} h`],
+  ['hh:mm', (ms) => `${
+    formatClockValue(ms / 1000 / 60 / 60)
+  }:${
+    formatClockValue((ms % (1000 * 60 * 60)) / 1000 / 60)
+  }`],
+  ['hh:mm:ss', (ms) => `${
+    formatClockValue(ms / 1000 / 60 / 60)
+  }:${
+    formatClockValue((ms % (1000 * 60 * 60)) / 1000 / 60)
+  }:${
+    formatClockValue((ms % (1000 * 60)) / 1000)
+  }`],
+]);
+
+export const fromMsToString = (ms?: number, format?: string, precision?: number): string | null => {
+  if (!ms) return null;
+
+  return format.split(' ').reduce((acc, f, i) => {
+    const parser = reverseTimeParsers.get(f);
+    if (!parser) throw new Error(`Unsupported format: ${f}`);
+
+    return [...acc, parser(ms, precision, i > 0)];
+  }, []).join(' ');
+};
