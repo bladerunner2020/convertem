@@ -18,6 +18,10 @@ const RU_TIME_PARSERS: TimeParser[] = [
 ];
 
 describe('toMilliseconds', () => {
+  afterEach(() => {
+    setTimeParsers();
+  });
+
   it('null or undefined', () => {
     expect(toMilliseconds()).toBe(0);
     expect(toMilliseconds(null)).toBe(0);
@@ -81,5 +85,18 @@ describe('toMilliseconds', () => {
     expect(toMilliseconds('3 ч')).toBe(3600000 * 3);
     expect(toMilliseconds('10 часов')).toBe(36000000);
     expect(toMilliseconds('10 ч')).toBe(36000000);
+  });
+
+  it('should convert to milliseconds with minus sign', () => {
+    expect(toMilliseconds('-1 sec')).toBe(-1000);
+    expect(toMilliseconds('-1 min')).toBe(-60000);
+    expect(toMilliseconds('-1 hour')).toBe(-3600000);
+  });
+
+  it('time format X d or X days', () => {
+    expect(toMilliseconds('1 day')).toBe(24 * 3600 * 1000);
+    expect(toMilliseconds('1 days')).toBe(24 * 3600 * 1000);
+    expect(toMilliseconds('1 d')).toBe(24 * 3600 * 1000);
+    expect(toMilliseconds('10 d')).toBe(10 * 24 * 3600 * 1000);
   });
 });

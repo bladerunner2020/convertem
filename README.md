@@ -1,6 +1,6 @@
 # Convert 'em
 
-Small library that helps with convertion. Could be very helpful when getting values from configuration files (like yaml, etc).
+Small library that helps with conversion. Could be very helpful when getting values from configuration files (like yaml, etc).
 
 ## Installation
 
