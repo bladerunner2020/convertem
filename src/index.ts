@@ -1,11 +1,17 @@
-// Convert input argument s to boolean
-// if s is a string
-//     yes, true, on (case insensitive) => true
-//     no, false, off (case insensitive) => false
-//     anything else => Boolean(s)
-// if s is a number:
-//     0 => false
-//     anything else => true
+/**
+ * Converts input argument `s` to boolean.
+ *
+ * @param s - The input to convert.
+ *
+ * If `s` is a string:
+ * - 'yes', 'true', 'on' (case insensitive) => true
+ * - 'no', 'false', 'off' (case insensitive) => false
+ * - anything else => Boolean(s)
+ *
+ * If `s` is a number:
+ * - 0 => false
+ * - anything else => true
+ */
 export const toBoolean = (s?: boolean | number | string | null): boolean => {
   if (typeof s === 'undefined' || s === null) return false;
   if (typeof s === 'boolean') return s;
@@ -20,29 +26,55 @@ export const toBoolean = (s?: boolean | number | string | null): boolean => {
   return Boolean(s);
 };
 
+/**
+ * Type that represents time parser
+ */
 export type TimeParser = {
   re: RegExp,
   f: (res: string[]) => number
 };
 
-let timeParsers: TimeParser[] = [
+/**
+ * Default time parsers
+ */
+export const DEFAULT_TIME_PARSERS: TimeParser[] = [
   // "X"
-  { re: /^(\d+)$/, f: (res) => +res[1] },
+  { re: /^([-+]?\d+)$/, f: (res) => +res[1] },
   // "X ms" or "X millisecond(s)"
-  { re: /^(\d+) *(:?ms|milliseconds?)$/, f: (res) => +res[1] },
+  { re: /^([-+]?\d+) *(:?ms|milliseconds?)$/, f: (res) => +res[1] },
   // "X s" or "X sec" or "X second(s)"
-  { re: /^(\d+(\.\d+)?) *(:?s|sec|seconds?)$/, f: (res) => +res[1] * 1000 }, // seconds
+  { re: /^([-+]?\d+(\.\d+)?) *(:?s|sec|seconds?)$/, f: (res) => +res[1] * 1000 }, // seconds
   // "X m" or "X min" or "X minute(s)"
-  { re: /^(\d+(\.\d+)?) *(:?m|min|minutes?)$/, f: (res) => +res[1] * 60 * 1000 },
+  { re: /^([-+]?\d+(\.\d+)?) *(:?m|min|minutes?)$/, f: (res) => +res[1] * 60 * 1000 },
   // X hours
-  { re: /^(\d+(\.\d+)?) *(:?h|hours?)$/, f: (res) => +res[1] * 3600 * 1000 },
+  { re: /^([-+]?\d+(\.\d+)?) *(:?h|hours?)$/, f: (res) => +res[1] * 3600 * 1000 },
   // time in format mm:ss
-  { re: /^(\d{1,2}):(\d{2})$/, f: (res) => +res[1] * 60 * 1000 + +res[2] * 1000 },
+  { re: /^([-+]?\d{1,2}):(\d{2})$/, f: (res) => +res[1] * 60 * 1000 + +res[2] * 1000 },
   // time in format hh:mm:ss
-  { re: /^(\d{1,2}):(\d{2}):(\d{2})$/, f: (res) => +res[1] * 3600 * 1000 + +res[2] * 60 * 1000 + +res[3] * 1000 },
+  { re: /^([-+]?\d{1,2}):(\d{2}):(\d{2})$/, f: (res) => +res[1] * 3600 * 1000 + +res[2] * 60 * 1000 + +res[3] * 1000 },
+  // time in format X d or X day(s)
+  { re: /^([-+]?\d+(\.\d+)?) *(:?d|days?)$/, f: (res) => +res[1] * 24 * 3600 * 1000 },
 ];
 
-// Convert input argument s to milliseconds
+let timeParsers: TimeParser[] = DEFAULT_TIME_PARSERS;
+
+/**
+ * Convert input argument s to milliseconds.
+ * If input is a number, it will be returned as is.
+ * If input is a string, it will be converted to milliseconds
+ * @param s - number of milliseconds or string representing period of time.
+ * @returns - number of milliseconds or null if conversion failed
+ * @example
+ * - toMilliseconds(1000) => 1000
+ * - toMilliseconds('1 second') => 1000
+ * - toMilliseconds('10sec') => 10000
+ * - toMilliseconds('10 seconds') => 10000
+ * - toMilliseconds('10  sec ') => 10000
+ * - toMilliseconds('10 s') => 10000
+ * - toMilliseconds('0.5 sec') => 500
+ * - toMilliseconds('1.5 sec') => 1500
+ * - toMilliseconds('1 minute') => 60000
+ */
 export const toMilliseconds = (s?: string | number): number | null => {
   if (!s) return 0;
 
@@ -52,37 +84,105 @@ export const toMilliseconds = (s?: string | number): number | null => {
   const parsers = timeParsers;
 
   const trimmed = s.trim();
-  for (let i = 0; i < parsers.length; i++) {
-    const { re, f } = parsers[i];
+  for (const parser of parsers) {
+    const { re, f } = parser;
     const res = re.exec(trimmed);
     if (res) return f(res);
   }
 
   return null;
 };
+/**
+ * Convert input argument s to seconds.
+ * If input is a number, it will be returned as is.
+ * If input is a string, it will be converted to seconds
+ * @param s - number of seconds or string representing period of time.
+ * @returns - number of seconds or null if conversion failed
+ * @example
+ * - toSeconds(60) => 60
+ * - toSeconds('1 minute') => 60
+ * - toSeconds('10min') => 600
+ */
+export const toSeconds = (s?: string | number): number | null => {
+  if (typeof s === 'number') return s;
+  const ms = toMilliseconds(s);
+  if (ms === null) return null;
+  return Math.floor(ms / 1000);
+};
 
-// Set Time parsers - can be used for localization
-export const setTimeParsers = (parsers: TimeParser[]) => {
+/**
+ * Convert input argument s to minutes.
+ * If input is a number, it will be returned as is.
+ * If input is a string, it will be converted to minutes
+ * @param s - number of minutes or string representing period of time.
+ * @returns - number of minutes or null if conversion failed
+ * @example
+ * - toMinutes(10) => 10
+ * - toMinutes('1 minute') => 1
+ * - toMinutes('10min') => 10
+ * - toMinutes('60 sec') => 1
+ * - toMinutes('1:30') => 1
+ * - toMinutes('1 hour') => 60
+ */
+export const toMinutes = (s?: string | number): number | null => {
+  if (typeof s === 'number') return s;
+  const ms = toMilliseconds(s);
+  if (ms === null) return null;
+  return Math.floor(ms / 1000 / 60);
+};
+
+/**
+ * Convert input argument s to hours.
+ * If input is a number, it will be returned as is.
+ * If input is a string, it will be converted to hours
+ * @param s - number of hours or string representing period of time.
+ * @returns - number of hours or null if conversion failed
+ * @example
+ * - toHours(5) => 5
+ * - toHours('1 hour') => 1
+ * - toHours('10h') => 10
+ * - toHours('10 hours') => 10
+ * - toHours('120 min ') => 2
+ * - toHours('1:30') => 0
+ * - toHours('1 day') => 24
+ */
+export const toHours = (s?: string | number): number | null => {
+  if (typeof s === 'number') return s;
+  const ms = toMilliseconds(s);
+  if (ms === null) return null;
+  return Math.floor(ms / 1000 / 60 / 60);
+};
+
+/**
+ * Set time parsers for converting string to milliseconds
+ * can be used for localization
+ * @param parsers - array of time parsers
+ * @see DEFAULT_TIME_PARSERS
+ */
+export const setTimeParsers = (parsers: TimeParser[] = DEFAULT_TIME_PARSERS) => {
   timeParsers = parsers;
 };
 
-// convert input argument s to number
+/**
+ * Convert input argument `s` to number
+ * @param s - input argument
+ * @returns - number or null if conversion failed
+ */
 export const toNumber = (s?: string | boolean | number): number | null => {
   if (!s) return 0;
-  // if (typeof s === 'undefined' || s === null) return 0;
   if (typeof s === 'boolean') return Number(s);
   if (typeof s === 'number') return s;
 
   let s1 = s.toLowerCase();
   if (typeof s === 'string') {
     let base = 10;
-    if (s1.indexOf('0x') === 0) {
+    if (s1.startsWith('0x')) {
       s1 = s1.slice(2);
       base = 16;
-    } else if (s1.indexOf('0b') === 0) {
+    } else if (s1.startsWith('0b')) {
       s1 = s1.slice(2);
       base = 2;
-    } else if (s1.indexOf('0o') === 0) {
+    } else if (s1.startsWith('0o')) {
       s1 = s1.slice(2);
       base = 8;
     }
@@ -122,6 +222,18 @@ const reverseTimeParsers: Map<string, (
   }`],
 ]);
 
+/**
+ * Convert milliseconds to string
+ * @param ms - number of milliseconds
+ * @param format - format of output string
+ * @param precision - number of digits after the decimal point
+ * @returns - string representation of milliseconds or null if conversion failed
+ * @example
+ * - fromMsToString(1000, 'ss') => '1 sec'
+ * - fromMsToString(540000, 'ss') => '540 sec'
+ * - fromMsToString(1000, 'mm') => '0 min'
+ * - fromMsToString(60000, 'mm') => '1 min'
+ */
 export const fromMsToString = (ms?: number, format?: string, precision?: number): string | null => {
   if (!ms) return null;
 

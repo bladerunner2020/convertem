@@ -1,6 +1,6 @@
 {
   "name": "convertem",
-  "version": "1.1.1",
+  "version": "1.2.0",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "files": [
@@ -12,17 +12,18 @@
     "build": "tsc",
     "prebuild-prod": "rm -rf ./dist/",
     "build-prod": "tsc --project tsconfig-prod.json",
-    "test": "jest"
+    "test": "jest",
+    "lint": "eslint . --ext .ts",
+    "type-check": "tsc --noEmit"
   },
   "license": "MIT",
-  "dependencies": {},
   "devDependencies": {
     "@babel/core": "^7.5.5",
     "@babel/preset-env": "^7.5.5",
     "@types/jest": "^29.2.4",
     "@typescript-eslint/eslint-plugin": "^5.36.1",
     "@typescript-eslint/parser": "^5.36.1",
-    "babel-jest": "^24.8.0",
+    "babel-jest": "^29.7.0",
     "eslint": "^7.32.0",
     "eslint-config-airbnb-base": "^14.1.0",
     "eslint-config-airbnb-typescript": "^17.0.0",
